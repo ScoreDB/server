@@ -43,7 +43,8 @@ class LoginController extends Controller
             'provider' => $provider,
             'provided_id' => $user->getId()
         ])->first();
-        if (isset($provided)) {
+
+        if (!empty($provided)) {
             $userCreated = $provided->user;
         } else {
             $userCreated = User::firstOrNew([
@@ -54,13 +55,6 @@ class LoginController extends Controller
                 ->exists()) {
                 return $this->error('This email address has already been used.');
             }
-
-            Provider::create([
-                'provider' => $provider,
-                'provided_id' => $user->getId(),
-                'user_id' => $userCreated->id,
-                'avatar' => $user->getAvatar()
-            ])->save();
         }
 
         $userCreated->forceFill([
@@ -68,6 +62,15 @@ class LoginController extends Controller
             'name' => $user->getName(),
             'email_verified_at' => now()
         ])->save();
+
+        if (empty($provided)) {
+            Provider::create([
+                'provider' => $provider,
+                'provided_id' => $user->getId(),
+                'user_id' => $userCreated->id,
+                'avatar' => $user->getAvatar()
+            ])->save();
+        }
 
         Auth::login($userCreated, true);
 
