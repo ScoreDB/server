@@ -1,3 +1,3 @@
 # ScoreDB Server
 
-This is the ScoreDB server.
+This is the ScoreDB v3 API server.
