@@ -13,7 +13,7 @@ return [
     |
     */
 
-    'name' => env('APP_NAME', 'ScoreDB Server'),
+    'name' => env('APP_NAME', 'ScoreDB v3 API Server'),
 
     /*
     |--------------------------------------------------------------------------
