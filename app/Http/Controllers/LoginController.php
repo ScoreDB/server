@@ -4,34 +4,45 @@ namespace App\Http\Controllers;
 
 use App\Models\Provider;
 use App\Models\User;
-use Debugbar;
 use Exception;
-use Illuminate\Http\Response;
+use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Laravel\Socialite\Facades\Socialite;
 
 class LoginController extends Controller
 {
-    public function redirect (string $provider) {
+    public function index (Request $request) {
+        /*return $this->error('Please login first.');*/
+
+        // As GitHub is the only provider available now,
+        // we can redirect this to `login/github`.
+        return $this->redirect($request, 'github');
+    }
+
+    public function redirect (Request $request, string $provider) {
         if ($response = $this->validateProvider($provider)) {
-            return $response;
+            return $this->response($request, $response);
         }
 
+        session('login_from', $request->input('from'));
+
+        /** @noinspection PhpPossiblePolymorphicInvocationInspection */
         return Socialite::driver($provider)->stateless()->redirect();
     }
 
-    public function callback (string $provider) {
+    public function callback (Request $request, string $provider) {
         if ($response = $this->validateProvider($provider)) {
-            return $response;
+            return $this->response($request, $response);
         }
 
         try {
             /**
              * @var \Laravel\Socialite\Contracts\User
+             * @noinspection PhpPossiblePolymorphicInvocationInspection
              */
             $user = Socialite::driver($provider)->stateless()->user();
         } catch (Exception $e) {
-            Debugbar::addThrowable($e);
+            report($e);
             return $this->error('Login failed.');
         }
 
@@ -74,12 +85,24 @@ class LoginController extends Controller
 
         Auth::login($userCreated, true);
 
-        return $this->success('Login successful.', data: $user);
+        if (!$request->acceptsHtml()) {
+            return $this->success('Login successful.', data: $user);
+        }
+
+        return redirect(session('login_from', route('home')));
     }
 
-    protected function validateProvider (string $provider): Response | null {
+    protected function validateProvider (string $provider): ?string {
         if (!in_array($provider, ['github'])) {
-            return $this->error('Please login with GitHub.');
+            return 'Please login with GitHub.';
         } else return null;
+    }
+
+    protected function response (Request $request, ?string $message = null) {
+        if ($request->acceptsHtml()) {
+            return $message;
+        }
+
+        return $this->error($message);
     }
 }

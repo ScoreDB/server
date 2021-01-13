@@ -1,5 +1,7 @@
 <?php
 
+use App\Http\Controllers\IndexController;
+use App\Http\Controllers\LoginController;
 use Illuminate\Support\Facades\Route;
 
 /*
@@ -13,11 +15,11 @@ use Illuminate\Support\Facades\Route;
 |
 */
 
-Route::get('/', function () {
-    $appName = config('app.name');
-    return "Welcome to the $appName.";
-})->name('home');
+Route::get('/', [IndexController::class, 'index'])->name('home');
 
-Route::get('login', function () {
-    return 'Please login first.';
-})->name('login');
+Route::middleware('guest')->group(function () {
+    Route::get('login', [LoginController::class, 'index'])->name('login');
+
+    Route::get('login/{provider}', [LoginController::class, 'redirect']);
+    Route::any('login/{provider}/callback', [LoginController::class, 'callback']);
+});

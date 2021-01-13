@@ -1,6 +1,5 @@
 <?php
 
-use App\Http\Controllers\LoginController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 
@@ -14,9 +13,6 @@ use Illuminate\Support\Facades\Route;
 | is assigned the "api" middleware group. Enjoy building your API!
 |
 */
-
-Route::get('login/{provider}', [LoginController::class, 'redirect']);
-Route::any('login/{provider}/callback', [LoginController::class, 'callback']);
 
 Route::middleware('auth:sanctum')->group(function () {
     Route::get('/user', function (Request $request) {
