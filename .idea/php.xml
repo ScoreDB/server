@@ -98,6 +98,33 @@
       <path value="$PROJECT_DIR$/vendor/league/oauth1-client" />
       <path value="$PROJECT_DIR$/vendor/laravel/socialite" />
       <path value="$PROJECT_DIR$/vendor/laravel-lang/lang" />
+      <path value="$PROJECT_DIR$/vendor/http-interop/http-factory-guzzle" />
+      <path value="$PROJECT_DIR$/vendor/knplabs/github-api" />
+      <path value="$PROJECT_DIR$/vendor/graham-campbell/bounded-cache" />
+      <path value="$PROJECT_DIR$/vendor/graham-campbell/github" />
+      <path value="$PROJECT_DIR$/vendor/graham-campbell/manager" />
+      <path value="$PROJECT_DIR$/vendor/psr/http-factory" />
+      <path value="$PROJECT_DIR$/vendor/psr/cache" />
+      <path value="$PROJECT_DIR$/vendor/symfony/var-exporter" />
+      <path value="$PROJECT_DIR$/vendor/symfony/cache-contracts" />
+      <path value="$PROJECT_DIR$/vendor/symfony/options-resolver" />
+      <path value="$PROJECT_DIR$/vendor/symfony/cache" />
+      <path value="$PROJECT_DIR$/vendor/php-http/promise" />
+      <path value="$PROJECT_DIR$/vendor/php-http/multipart-stream-builder" />
+      <path value="$PROJECT_DIR$/vendor/php-http/message" />
+      <path value="$PROJECT_DIR$/vendor/php-http/httplug" />
+      <path value="$PROJECT_DIR$/vendor/php-http/discovery" />
+      <path value="$PROJECT_DIR$/vendor/php-http/client-common" />
+      <path value="$PROJECT_DIR$/vendor/php-http/cache-plugin" />
+      <path value="$PROJECT_DIR$/vendor/clue/stream-filter" />
+      <path value="$PROJECT_DIR$/vendor/php-http/message-factory" />
+      <path value="$PROJECT_DIR$/vendor/lcobucci/clock" />
+      <path value="$PROJECT_DIR$/vendor/lcobucci/jwt" />
+      <path value="$PROJECT_DIR$/vendor/jenssegers/mongodb" />
+      <path value="$PROJECT_DIR$/vendor/mongodb/mongodb" />
+      <path value="$PROJECT_DIR$/vendor/jean85/pretty-package-versions" />
+      <path value="$PROJECT_DIR$/vendor/league/csv" />
+      <path value="$PROJECT_DIR$/vendor/overtrue/pinyin" />
     </include_path>
   </component>
   <component name="PhpProjectSharedConfiguration" php_language_level="8.0" />
@@ -149,7 +176,6 @@
       <extension name="memcached" enabled="false" />
       <extension name="ming" enabled="false" />
       <extension name="mongo" enabled="false" />
-      <extension name="mongodb" enabled="false" />
       <extension name="mosquitto-php" enabled="false" />
       <extension name="mqseries" enabled="false" />
       <extension name="mssql" enabled="false" />
@@ -194,7 +220,6 @@
       <extension name="wddx" enabled="false" />
       <extension name="win32service" enabled="false" />
       <extension name="wincache" enabled="false" />
-      <extension name="xdebug" enabled="false" />
       <extension name="xhprof" enabled="false" />
       <extension name="xlswriter" enabled="false" />
       <extension name="xmlrpc" enabled="false" />
