@@ -24,7 +24,9 @@ class LoginController extends Controller
             return $this->response($request, $response);
         }
 
-        session('login_from', $request->input('from'));
+        session([
+            'login_from' => $request->input('from'),
+        ]);
 
         /** @noinspection PhpPossiblePolymorphicInvocationInspection */
         return Socialite::driver($provider)->stateless()->redirect();
@@ -85,20 +87,31 @@ class LoginController extends Controller
 
         Auth::login($userCreated, true);
 
-        if (!$request->acceptsHtml()) {
+        if ( ! $request->acceptsHtml()) {
             return $this->success('Login successful.', data: $user);
         }
 
         return redirect(session('login_from', route('home')));
     }
 
-    protected function validateProvider (string $provider): ?string {
-        if (!in_array($provider, ['github'])) {
-            return 'Please login with GitHub.';
-        } else return null;
+    public function logout()
+    {
+        Auth::logout();
+
+        return response(status: 204);
     }
 
-    protected function response (Request $request, ?string $message = null) {
+    protected function validateProvider(string $provider) : ?string
+    {
+        if ( ! in_array($provider, ['github'])) {
+            return 'Please login with GitHub.';
+        } else {
+            return null;
+        }
+    }
+
+    protected function response(Request $request, ?string $message = null)
+    {
         if ($request->acceptsHtml()) {
             return $message;
         }

@@ -21,5 +21,8 @@ Route::middleware('guest')->group(function () {
     Route::get('login', [LoginController::class, 'index'])->name('login');
 
     Route::get('login/{provider}', [LoginController::class, 'redirect']);
-    Route::any('login/{provider}/callback', [LoginController::class, 'callback']);
+    Route::any('login/{provider}/callback',
+        [LoginController::class, 'callback']);
 });
+
+Route::any('logout', [LoginController::class, 'logout']);
