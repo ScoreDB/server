@@ -2,7 +2,10 @@
 
 namespace App\Providers;
 
+use App\Models\User;
+use App\Services\Integrations\Github;
 use Illuminate\Foundation\Support\Providers\AuthServiceProvider as ServiceProvider;
+use Illuminate\Support\Facades\Gate;
 
 class AuthServiceProvider extends ServiceProvider
 {
@@ -24,6 +27,25 @@ class AuthServiceProvider extends ServiceProvider
     {
         $this->registerPolicies();
 
-        //
+        Gate::define('studentdb:read', function (User $user) {
+            foreach ($user->providers as $provider) {
+                if ($provider->provider === 'github') {
+                    /** @var Github $github */
+                    $github = resolve(Github::class);
+
+                    return $github->checkStudentDBAccess($provider->provided_id);
+                }
+            }
+
+            return false;
+        });
+
+        Gate::define('user:token', function (User $user) {
+            return $user->tokenCan('user:token');
+        });
+
+        Gate::define('admin', function (User $user) {
+            return $user->is_admin;
+        });
     }
 }

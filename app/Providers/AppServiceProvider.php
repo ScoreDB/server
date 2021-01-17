@@ -2,6 +2,8 @@
 
 namespace App\Providers;
 
+use App\Services\Integrations\Github;
+use GrahamCampbell\GitHub\GitHubManager;
 use Illuminate\Support\ServiceProvider;
 
 class AppServiceProvider extends ServiceProvider
@@ -13,7 +15,9 @@ class AppServiceProvider extends ServiceProvider
      */
     public function register()
     {
-        //
+        $this->app->singleton(Github::class, function ($app) {
+            return new Github($app->make(GitHubManager::class));
+        });
     }
 
     /**

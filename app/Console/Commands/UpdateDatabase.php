@@ -20,7 +20,7 @@ class UpdateDatabase extends Command
     public function __construct()
     {
         parent::__construct();
-        $this->github = app(Github::class);
+        $this->github = resolve(Github::class);
         $this->pinyin = new Pinyin();
     }
 

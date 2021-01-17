@@ -39,7 +39,7 @@ class LoginController extends Controller
 
         try {
             /**
-             * @var \Laravel\Socialite\Contracts\User
+             * @var \Laravel\Socialite\Contracts\User $user
              * @noinspection PhpPossiblePolymorphicInvocationInspection
              */
             $user = Socialite::driver($provider)->stateless()->user();
@@ -53,8 +53,8 @@ class LoginController extends Controller
         }
 
         $provided = Provider::where([
-            'provider' => $provider,
-            'provided_id' => $user->getId()
+            'provider'    => $provider,
+            'provided_id' => $user->getName()  // Actually GitHub user's login
         ])->first();
 
         if (!empty($provided)) {
@@ -71,17 +71,24 @@ class LoginController extends Controller
         }
 
         $userCreated->forceFill([
-            'email' => $user->getEmail(),
-            'name' => $user->getName(),
-            'email_verified_at' => now()
+            'email'             => $user->getEmail(),
+            'name'              => $user->getName(),
+            'email_verified_at' => now(),
         ])->save();
+
+        // Make the first user admin.
+        if ($userCreated->id === 1) {
+            $userCreated->is_admin = true;
+            $userCreated->save();
+        }
 
         if (empty($provided)) {
             Provider::create([
-                'provider' => $provider,
-                'provided_id' => $user->getId(),
-                'user_id' => $userCreated->id,
-                'avatar' => $user->getAvatar()
+                'provider'    => $provider,
+                'provided_id' => $user->getNickname(),
+                // Actually GitHub user's login
+                'user_id'     => $userCreated->id,
+                'avatar'      => $user->getAvatar(),
             ])->save();
         }
 
@@ -91,7 +98,8 @@ class LoginController extends Controller
             return $this->success('Login successful.', data: $user);
         }
 
-        return redirect(session('login_from', route('home')));
+        return redirect(session('login_from') ??
+            route('home', absolute: false));
     }
 
     public function logout()

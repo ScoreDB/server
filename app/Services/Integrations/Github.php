@@ -19,34 +19,6 @@ class Github
         $this->github = $github;
     }
 
-    public function getGrades() : array
-    {
-        $manifest = $this->getManifest();
-
-        return $manifest['grades'];
-    }
-
-    public function getManifest() : array
-    {
-        $ttl = new DateInterval('PT10M');
-
-        return Cache::remember('store_manifest', $ttl, function () {
-            return json_decode($this->getFile('meta.json'), true);
-        });
-    }
-
-    private function getFile(string $path) : string
-    {
-        $client = $this->getScoreDBClient();
-
-        return $client->repo()->contents()->download(
-            'ScoreDB',
-            'studentdb-private-store',
-            $path,
-            'latest'
-        );
-    }
-
     public function getScoreDBClient() : Client
     {
         if (empty($this::$client)) {
@@ -87,10 +59,55 @@ class Github
         throw new UnexpectedValueException('No installation found.');
     }
 
-    public function getGradeStudents($grade, $path) : array
+    private function getFile(string $path) : string
+    {
+        $client = $this->getScoreDBClient();
+
+        return $client->repo()->contents()->download(
+            'ScoreDB',
+            'studentdb-private-store',
+            $path,
+            'latest'
+        );
+    }
+
+    public function getManifest() : array
+    {
+        $ttl = new DateInterval('PT10M');
+
+        return Cache::remember('store_manifest', $ttl, function () {
+            return json_decode($this->getFile('meta.json'), true);
+        });
+    }
+
+    public function getGrades() : array
+    {
+        $manifest = $this->getManifest();
+
+        return $manifest['grades'];
+    }
+
+    public function getGradeStudents(string $grade, string $path) : array
     {
         $file = $this->getFile($path);
 
         return StudentInfoParser::parse($file, $grade);
+    }
+
+    public function checkStudentDBAccess(string $login) : bool
+    {
+        $ttl = new DateInterval('PT1H');
+
+        return Cache::remember("store_permission_$login", $ttl,
+            function () use ($login) {
+                $client     = $this->getScoreDBClient();
+                $permission = $client->repo()->collaborators()->permission(
+                    'ScoreDB',
+                    'studentdb-private-store',
+                    $login
+                )['permission'];
+
+                return $permission !== 'none';
+            });
     }
 }

@@ -23,14 +23,22 @@ use Illuminate\Database\Eloquent\Model;
  */
 class Provider extends Model
 {
-    protected $fillable = ['provider', 'provided_id', 'user_id', 'avatar'];
+    protected $fillable
+        = [
+            'provider',
+            'provided_id',
+            'user_id',
+            'avatar',
+        ];
 
-    protected $hidden = [
-        'created_at',
-        'updated_at'
-    ];
+    protected $hidden
+        = [
+            'created_at',
+            'updated_at',
+        ];
 
-    public function user () {
+    public function user()
+    {
         return $this->belongsTo(User::class);
     }
 }
