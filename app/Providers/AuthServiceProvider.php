@@ -28,12 +28,14 @@ class AuthServiceProvider extends ServiceProvider
         $this->registerPolicies();
 
         Gate::define('studentdb:read', function (User $user) {
-            foreach ($user->providers as $provider) {
-                if ($provider->provider === 'github') {
-                    /** @var Github $github */
-                    $github = resolve(Github::class);
+            if ($user->tokenCan('studentdb:read')) {
+                foreach ($user->providers as $provider) {
+                    if ($provider->provider === 'github') {
+                        /** @var Github $github */
+                        $github = resolve(Github::class);
 
-                    return $github->checkStudentDBAccess($provider->provided_id);
+                        return $github->checkStudentDBAccess($provider->provided_id);
+                    }
                 }
             }
 
@@ -45,7 +47,7 @@ class AuthServiceProvider extends ServiceProvider
         });
 
         Gate::define('admin', function (User $user) {
-            return $user->is_admin;
+            return $user->is_admin && $user->tokenCan('admin');
         });
     }
 }
