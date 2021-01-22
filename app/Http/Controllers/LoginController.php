@@ -26,6 +26,7 @@ class LoginController extends Controller
 
         session([
             'login_from' => $request->input('from'),
+            'login_challenge' => $request->input('challenge'),
         ]);
 
         /** @noinspection PhpPossiblePolymorphicInvocationInspection */
@@ -93,6 +94,12 @@ class LoginController extends Controller
         }
 
         Auth::login($userCreated, true);
+
+        if ($challenge = session('login_challenge')) {
+            cache([
+                "login_challenge_$challenge" => $userCreated->toArray(),
+            ]);
+        }
 
         if ( ! $request->acceptsHtml()) {
             return $this->success('Login successful.', data: $user);
