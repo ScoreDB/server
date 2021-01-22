@@ -15,13 +15,10 @@ class UpdateDatabase extends Command
 
     protected Github $github;
 
-    protected Pinyin $pinyin;
-
     public function __construct()
     {
         parent::__construct();
         $this->github = resolve(Github::class);
-        $this->pinyin = new Pinyin();
     }
 
     public function handle() : int

@@ -18,8 +18,7 @@
         "laravel/socialite": "^5.1",
         "laravel/tinker": "^2.5",
         "lcobucci/jwt": "^4.0",
-        "league/csv": "^9.5",
-        "overtrue/pinyin": "^4.0"
+        "league/csv": "^9.5"
     },
     "require-dev": {
         "barryvdh/laravel-debugbar": "^3.5",

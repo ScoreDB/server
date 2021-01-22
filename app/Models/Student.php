@@ -13,10 +13,15 @@ use Jenssegers\Mongodb\Schema\Blueprint;
  *
  * Data is stored in MongoDB.
  *
+ * To search data with name or pinyin, use this query
+ * (replace '$query' with your own query):
+ * { $or: [{ name_index: '$query' }, { pinyin: '$query' }] }
+ *
  * @property string $id
  * @property string $classId
  * @property string $gradeId
  * @property string $name
+ * @property array $name_index
  * @property array $pinyin
  * @property string $gender
  * @property ?Carbon $birthday
@@ -29,13 +34,8 @@ class Student extends Model
     public $timestamps = false;
     protected $connection = 'mongodb';
     protected $primaryKey = 'id';
-    protected $hidden = ['pinyin'];
+    protected $hidden = ['name_index', 'pinyin'];
     protected $dates = ['birthday'];
-
-    public static function dropCollection()
-    {
-        Schema::connection('mongodb')->drop('students');
-    }
 
     public static function createCollection()
     {
@@ -49,10 +49,11 @@ class Student extends Model
                         'eduid' => ['$type' => 2],
                     ],
                 ]);
-                $collection->index([
-                    'name'   => 'text',
-                    'pinyin' => 'text',
-                ]);
             });
+    }
+
+    public static function dropCollection()
+    {
+        Schema::connection('mongodb')->drop('students');
     }
 }
