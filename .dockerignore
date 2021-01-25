@@ -77,18 +77,9 @@ $RECYCLE.BIN/
 *.lnk
 
 ### Laravel Caches ###
-bootstrap/cache/*
+bootstrap/cache
 database/*.sqlite
-database/*.sqlite-journal
-storage/app/public/*
-storage/debugbar/*
-storage/framework/cache/*
-!storage/framework/cache/data
-storage/framework/cache/data/*
-storage/framework/sessions/*
-storage/framework/views/*
-storage/keys/*
-storage/logs/*
+storage
 
 ### Project Related ###
 .idea
