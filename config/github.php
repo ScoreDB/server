@@ -30,11 +30,11 @@ return [
     'connections' => [
 
         'app' => [
-            'method'  => 'private',
-            'appId'   => env('GITHUB_APP_ID'),
-            'keyPath' => env('GITHUB_PRIVATE_KEY'),
+            'method' => 'private',
+            'appId'  => env('GITHUB_APP_ID'),
+            'key'    => env('GITHUB_PRIVATE_KEY'),
             // 'backoff'    => false,
-            'cache'   => true,
+            'cache'  => true,
         ],
 
         'oauth' => [
