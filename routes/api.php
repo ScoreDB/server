@@ -16,13 +16,13 @@ use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 |
 */
 
-Route::middleware('auth:sanctum')->group(function () {
+Route::middleware(['auth:sanctum', 'can:user:tokens'])->group(function () {
     Route::get('/user', function (Request $request) {
         return $request->user();
     });
 
     Route::resource('/user/tokens', TokensController::class)->only([
-        'index', 'store',
+        'index', 'store', 'destroy',
     ]);
 });
 

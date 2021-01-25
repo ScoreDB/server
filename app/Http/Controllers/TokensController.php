@@ -2,29 +2,25 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Resources\UserTokenResource;
 use App\Models\User;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Gate;
 use Illuminate\Validation\Rule;
+use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 
 class TokensController extends Controller
 {
     public function index(Request $request)
     {
-        Gate::authorize('user:token');
-
         /** @var User $user */
-        $user = $request->user();
+        $user   = $request->user();
+        $result = UserTokenResource::collection($user->tokens()->get());
 
-        return response()->json($user->tokens()->get([
-            'name', 'abilities', 'created_at', 'last_used_at',
-        ]));
+        return response()->json($result);
     }
 
     public function store(Request $request)
     {
-        Gate::authorize('user:token');
-
         /** @var User $user */
         $user = $request->user();
 
@@ -44,5 +40,18 @@ class TokensController extends Controller
         $token = $user->createToken($data['name'], $data['roles']);
 
         return response()->json($token);
+    }
+
+    public function destroy(Request $request, int $token)
+    {
+        /** @var User $user */
+        $user = $request->user();
+
+        $token = $user->tokens()->find($token);
+        if (empty($token)) {
+            throw new NotFoundHttpException();
+        }
+
+        $token->delete();
     }
 }

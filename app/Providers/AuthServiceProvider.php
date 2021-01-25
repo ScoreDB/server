@@ -27,6 +27,14 @@ class AuthServiceProvider extends ServiceProvider
     {
         $this->registerPolicies();
 
+        Gate::before(function ($user) {
+            if ($user->isAdmin() && $user->tokenCan('admin')) {
+                return true;
+            }
+
+            return null;
+        });
+
         Gate::define('studentdb:read', function (User $user) {
             if ($user->tokenCan('studentdb:read')) {
                 foreach ($user->providers as $provider) {
@@ -46,8 +54,8 @@ class AuthServiceProvider extends ServiceProvider
             return $user->tokenCan('user:token');
         });
 
-        Gate::define('admin', function (User $user) {
-            return $user->is_admin && $user->tokenCan('admin');
+        Gate::define('admin', function () {
+            return false;
         });
     }
 }
