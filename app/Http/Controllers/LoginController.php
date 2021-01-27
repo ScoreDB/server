@@ -7,6 +7,7 @@ use App\Models\User;
 use Exception;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Session;
 use Laravel\Socialite\Facades\Socialite;
 
 class LoginController extends Controller
@@ -19,13 +20,16 @@ class LoginController extends Controller
         return $this->redirect($request, 'github');
     }
 
-    public function redirect (Request $request, string $provider) {
+    public function redirect (Request $request, string $provider)
+    {
         if ($response = $this->validateProvider($provider)) {
             return $this->response($request, $response);
         }
 
-        session([
-            'login_from' => $request->input('from'),
+        Session::remove('login_from');
+        Session::remove('login_challenge');
+        Session::put([
+            'login_from'      => $request->input('from'),
             'login_challenge' => $request->input('challenge'),
         ]);
 
@@ -95,9 +99,9 @@ class LoginController extends Controller
 
         Auth::login($userCreated, true);
 
-        if ($challenge = session('login_challenge')) {
+        if ($challenge = Session::remove('login_challenge')) {
             cache([
-                "login_challenge_$challenge" => $userCreated->toArray(),
+                "login_challenge_{$challenge}" => $userCreated->toArray(),
             ]);
         }
 
@@ -105,8 +109,8 @@ class LoginController extends Controller
             return $this->success('Login successful.', data: $user);
         }
 
-        return redirect(session('login_from') ??
-            route('home', absolute: false));
+        return redirect(Session::remove('login_from')
+            ?? route('home', absolute: false));
     }
 
     public function logout()
