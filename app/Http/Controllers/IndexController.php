@@ -9,9 +9,9 @@ class IndexController extends Controller
         $appName = config('app.name');
         $user    = auth()->user();
         if (isset($user)) {
-            return "Hello, $user->name! Welcome to the $appName.";
+            return "Hello, {$user->name}! Welcome to the {$appName}.";
         } else {
-            return "Welcome to the $appName.";
+            return "Welcome to the {$appName}.";
         }
     }
 }

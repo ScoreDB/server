@@ -1,6 +1,6 @@
 <?php
 
-use App\Http\Controllers\TokensController;
+use App\Http\Controllers\User\TokensController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
@@ -27,7 +27,7 @@ Route::middleware(['auth:sanctum', 'can:user:tokens'])->group(function () {
 });
 
 Route::get('/user/challenge/{challenge}', function ($challenge) {
-    $key  = "login_challenge_$challenge";
+    $key  = "login_challenge_{$challenge}";
     $user = cache($key);
     cache()->delete($key);
     if (empty($user)) {

@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Http\Controllers;
+namespace App\Http\Controllers\User;
 
 use App\Http\Resources\UserTokenResource;
 use App\Models\User;
@@ -34,7 +34,7 @@ class TokensController extends Controller
 
         if (empty($data['name'])) {
             $time         = now()->toISOString();
-            $data['name'] = "Key-$time";
+            $data['name'] = "Key-{$time}";
         }
 
         $token = $user->createToken($data['name'], $data['roles']);
