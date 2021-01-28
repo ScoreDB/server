@@ -34,7 +34,7 @@ class Student extends Model
     public $timestamps = false;
     protected $connection = 'mongodb';
     protected $primaryKey = 'id';
-    protected $hidden = ['name_index', 'pinyin'];
+    protected $hidden = ['_id', 'name_index', 'pinyin'];
     protected $dates = ['birthday'];
 
     public static function createCollection()

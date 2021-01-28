@@ -1,5 +1,8 @@
 <?php
 
+use App\Http\Controllers\StudentDB\ClassesController;
+use App\Http\Controllers\StudentDB\GradesController;
+use App\Http\Controllers\StudentDB\StudentsController;
 use App\Http\Controllers\User\TokensController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
@@ -16,14 +19,37 @@ use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 |
 */
 
-Route::middleware(['auth:sanctum', 'can:user:tokens'])->group(function () {
+Route::middleware(['auth:sanctum'])->group(function () {
     Route::get('/user', function (Request $request) {
         return $request->user();
     });
 
-    Route::resource('/user/tokens', TokensController::class)->only([
-        'index', 'store', 'destroy',
-    ]);
+    Route::middleware('can:user:tokens')->group(function () {
+        Route::apiResource('/user/tokens', TokensController::class)->only([
+            'index', 'store', 'destroy',
+        ]);
+    });
+
+    Route::middleware('can:studentdb:read')->group(function () {
+        Route::apiResource('/studentdb/grades', GradesController::class)->only([
+            'index', 'show',
+        ]);
+
+        Route::apiResource('/studentdb/classes', ClassesController::class)
+            ->only([
+                'show',
+            ]);
+
+        Route::apiResource('/studentdb/students', StudentsController::class)
+            ->only([
+                'show',
+            ]);
+
+        Route::middleware('throttle:search')->group(function () {
+            Route::get('/studentdb/search',
+                [StudentsController::class, 'search']);
+        });
+    });
 });
 
 Route::get('/user/challenge/{challenge}', function ($challenge) {
