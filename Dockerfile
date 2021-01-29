@@ -7,14 +7,14 @@ RUN sed -ri -e 's!/var/www/html!${APACHE_DOCUMENT_ROOT}!g' /etc/apache2/sites-av
 
 # Install dependencies
 RUN apt-get update && \
-    apt-get install unzip && \
+    apt-get install -y libpq-dev unzip && \
     apt-get clean && \
     rm -rf /var/lib/apt/lists/*
 
 # Install PHP extension
-RUN pecl install redis-5.3.2 && \
-    pecl install mongodb-1.9.0 && \
-    docker-php-ext-enable redis mongodb
+RUN docker-php-ext-install pgsql pdo_pgsql && \
+    pecl install redis-5.3.2 && \
+    docker-php-ext-enable redis
 
 # Install Composer
 RUN curl -sS https://getcomposer.org/installer | php -- --install-dir=/usr/local/bin --filename=composer
@@ -28,14 +28,12 @@ RUN mkdir -p \
         storage/framework/sessions \
         storage/framework/views \
         storage/logs && \
-    touch database/database.sqlite && \
-    chown www-data:www-data database/database.sqlite && \
     chown -R www-data:www-data \
         bootstrap/cache storage && \
     echo APP_KEY=>.env
 
 # Database configuration
-ENV DB_CONNECTION=sqlite
+ENV DB_CONNECTION=pgsql
 
 # Logging configuration
 ENV LOGGING_CHANNEL=stderr
@@ -46,7 +44,8 @@ ENV GITHUB_CLIENT_ID=Iv1.03655cb53b3ce79d
 
 # Install dependencies and generate a key
 RUN composer install --no-dev --no-cache && \
-    php artisan key:generate
+    php artisan key:generate && \
+    php artisan route:cache
 
 # Use production configuration
 RUN cp "$PHP_INI_DIR/php.ini-production" "$PHP_INI_DIR/php.ini"
