@@ -5,8 +5,8 @@ namespace App\Http\Controllers\StudentDB;
 use App\Http\Controllers\Controller;
 use App\Models\Student;
 use App\Services\Parsing\StudentInfoMatcher as Matcher;
+use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Http\Request;
-use Jenssegers\Mongodb\Eloquent\Builder;
 
 class StudentsController extends Controller
 {
@@ -58,8 +58,8 @@ class StudentsController extends Controller
         }
         if (mb_strlen($processedQuery) > 0) {
             $dbQuery->where(function (Builder $query) use ($processedQuery) {
-                $query->where('name_index', $processedQuery)
-                    ->orWhere('pinyin', $processedQuery);
+                $query->whereRaw('? = ANY(name_index) OR ? = ANY(pinyin)',
+                    [$processedQuery, $processedQuery]);
             });
         }
 

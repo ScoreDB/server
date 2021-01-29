@@ -3,10 +3,8 @@
 namespace App\Models;
 
 use Carbon\Carbon;
-use Illuminate\Support\Facades\Schema;
-use Jenssegers\Mongodb\Eloquent\Builder;
-use Jenssegers\Mongodb\Eloquent\Model;
-use Jenssegers\Mongodb\Schema\Blueprint;
+use Illuminate\Database\Eloquent\Builder;
+use Illuminate\Database\Eloquent\Model;
 
 /**
  * Student Model
@@ -18,8 +16,8 @@ use Jenssegers\Mongodb\Schema\Blueprint;
  * { $or: [{ name_index: '$query' }, { pinyin: '$query' }] }
  *
  * @property string $id
- * @property string $classId
  * @property string $gradeId
+ * @property string $classId
  * @property string $name
  * @property array $name_index
  * @property array $pinyin
@@ -32,28 +30,41 @@ use Jenssegers\Mongodb\Schema\Blueprint;
 class Student extends Model
 {
     public $timestamps = false;
-    protected $connection = 'mongodb';
-    protected $primaryKey = 'id';
-    protected $hidden = ['_id', 'name_index', 'pinyin'];
-    protected $dates = ['birthday'];
 
-    public static function createCollection()
+    protected $keyType = 'string';
+
+    protected $hidden
+        = [
+            '_id', 'name_index', 'pinyin',
+        ];
+
+    protected $casts
+        = [
+            'name_index' => 'array',
+            'pinyin'     => 'array',
+        ];
+
+    protected $dates
+        = [
+            'birthday',
+        ];
+
+    public function setNameIndexAttribute(array $value)
     {
-        Schema::connection('mongodb')
-            ->create('students', function (Blueprint $collection) {
-                $collection->unique('id');
-                $collection->index('classId');
-                $collection->index('gradeId');
-                $collection->unique('eduid', options: [
-                    'partialFilterExpression' => [
-                        'eduid' => ['$type' => 2],
-                    ],
-                ]);
-            });
+        $this->attributes['name_index'] = self::encodeArray($value);
     }
 
-    public static function dropCollection()
+    public function setPinyinAttribute(array $value)
     {
-        Schema::connection('mongodb')->drop('students');
+        $this->attributes['pinyin'] = self::encodeArray($value);
+    }
+
+    protected static function encodeArray(array $value)
+    {
+        $json = json_encode($value, JSON_UNESCAPED_UNICODE);
+        $json = str_replace('[', '{', $json);
+        $json = str_replace(']', '}', $json);
+
+        return $json;
     }
 }

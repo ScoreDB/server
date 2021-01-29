@@ -5,7 +5,6 @@ namespace App\Console\Commands;
 use App\Models\Student;
 use App\Services\Integrations\Github;
 use Illuminate\Console\Command;
-use Overtrue\Pinyin\Pinyin;
 
 class UpdateDatabase extends Command
 {
@@ -25,14 +24,12 @@ class UpdateDatabase extends Command
     {
         $this->info('Database update in progress...');
 
-        // Clear old data
-        Student::dropCollection();
-        Student::createCollection();
+        Student::truncate();
 
         $all_students = [];
 
         foreach ($this->github->getGrades() as $grade => $path) {
-            $this->info("Downloading $grade student data...");
+            $this->info("Downloading {$grade} student data...");
 
             $students     = $this->github->getGradeStudents($grade, $path);
             $all_students = array_merge($all_students, $students);

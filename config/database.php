@@ -15,7 +15,7 @@ return [
     |
     */
 
-    'default' => env('DB_CONNECTION', 'sqlite'),
+    'default' => env('DB_CONNECTION', 'pgsql'),
 
     /*
     |--------------------------------------------------------------------------
@@ -35,30 +35,19 @@ return [
 
     'connections' => [
 
-        'sqlite' => [
-            'driver'                  => 'sqlite',
-            'url'                     => env('DATABASE_URL'),
-            'database'                => env('DB_DATABASE',
-                database_path('database.sqlite')),
-            'prefix'                  => '',
-            'foreign_key_constraints' => env('DB_FOREIGN_KEYS', true),
-        ],
-
-        'mongodb' => [
-            'driver'   => 'mongodb',
-            'host'     => env('MONGODB_HOST', '127.0.0.1'),
-            'port'     => env('MONGODB_PORT', 27017),
-            'database' => env('MONGODB_DATABASE', 'scoredb'),
-            'username' => env('MONGODB_USERNAME', 'scoredb'),
-            'password' => env('MONGODB_PASSWORD', ''),
-            'options'  => [
-                // here you can pass more settings to the Mongo Driver Manager
-                // see https://www.php.net/manual/en/mongodb-driver-manager.construct.php
-                // under "Uri Options" for a list of complete parameters that you can use
-
-                'database' => env('DB_AUTHENTICATION_DATABASE', 'admin'),
-                // required with Mongo 3+
-            ],
+        'pgsql' => [
+            'driver'         => 'pgsql',
+            'url'            => env('DATABASE_URL'),
+            'host'           => env('DB_HOST', '127.0.0.1'),
+            'port'           => env('DB_PORT', '5432'),
+            'database'       => env('DB_DATABASE', 'scoredb'),
+            'username'       => env('DB_USERNAME', 'scoredb'),
+            'password'       => env('DB_PASSWORD', ''),
+            'charset'        => 'utf8',
+            'prefix'         => '',
+            'prefix_indexes' => true,
+            'schema'         => 'public',
+            'sslmode'        => 'prefer',
         ],
 
     ],
