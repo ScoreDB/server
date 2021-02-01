@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "4686f31ddc7acf0e45960f0593f7fc7e",
+    "content-hash": "2990a626d56df5f49c67639ca86f981c",
     "packages": [
         {
             "name": "acidjazz/metapi",
@@ -9469,8 +9469,7 @@
     "prefer-stable": true,
     "prefer-lowest": false,
     "platform": {
-        "php": "^8.0",
-        "ext-redis": "*"
+        "php": "^8.0"
     },
     "platform-dev": [],
     "plugin-api-version": "2.0.0"
