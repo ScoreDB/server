@@ -59,7 +59,8 @@ class LoginController extends Controller
 
         $provided = Provider::where([
             'provider'    => $provider,
-            'provided_id' => $user->getName()  // Actually GitHub user's login
+            // Actually GitHub user's login
+            'provided_id' => $user->getNickname(),
         ])->first();
 
         if (!empty($provided)) {
@@ -77,7 +78,8 @@ class LoginController extends Controller
 
         $userCreated->forceFill([
             'email'             => $user->getEmail(),
-            'name'              => $user->getName(),
+            // Actually GitHub user's login
+            'name'              => $user->getNickname(),
             'email_verified_at' => now(),
         ])->save();
 
@@ -90,8 +92,8 @@ class LoginController extends Controller
         if (empty($provided)) {
             Provider::create([
                 'provider'    => $provider,
-                'provided_id' => $user->getNickname(),
                 // Actually GitHub user's login
+                'provided_id' => $user->getNickname(),
                 'user_id'     => $userCreated->id,
                 'avatar'      => $user->getAvatar(),
             ])->save();

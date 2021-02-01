@@ -24,7 +24,7 @@ Route::middleware(['auth:sanctum'])->group(function () {
         return $request->user();
     });
 
-    Route::middleware('can:user:tokens')->group(function () {
+    Route::middleware('can:user:token')->group(function () {
         Route::apiResource('/user/tokens', TokensController::class)->only([
             'index', 'store', 'destroy',
         ]);
