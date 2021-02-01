@@ -5,6 +5,7 @@
     "license": "GPL-3.0-or-later",
     "require": {
         "php": "^8.0",
+        "ext-redis": "*",
         "acidjazz/metapi": "^2.1",
         "fideloper/proxy": "^4.4",
         "fruitcake/laravel-cors": "^2.0",
