@@ -5,8 +5,8 @@ namespace App\Http\Controllers\StudentDB;
 use App\Http\Controllers\Controller;
 use App\Models\Student;
 use DateInterval;
+use Illuminate\Database\RecordsNotFoundException;
 use Illuminate\Support\Facades\Cache;
-use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 
 class ClassesController extends Controller
 {
@@ -20,7 +20,7 @@ class ClassesController extends Controller
             ->first();
 
         if (empty($classId)) {
-            throw new NotFoundHttpException();
+            throw new RecordsNotFoundException();
         }
 
         $ttl = new DateInterval('PT10M');

@@ -4,9 +4,9 @@ use App\Http\Controllers\StudentDB\ClassesController;
 use App\Http\Controllers\StudentDB\GradesController;
 use App\Http\Controllers\StudentDB\StudentsController;
 use App\Http\Controllers\User\TokensController;
+use Illuminate\Database\RecordsNotFoundException;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
-use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 
 /*
 |--------------------------------------------------------------------------
@@ -57,7 +57,7 @@ Route::get('/user/challenge/{challenge}', function ($challenge) {
     $user = cache($key);
     cache()->delete($key);
     if (empty($user)) {
-        throw new NotFoundHttpException();
+        throw new RecordsNotFoundException();
     }
 
     return $user;

@@ -5,9 +5,9 @@ namespace App\Http\Controllers\User;
 use App\Http\Controllers\Controller;
 use App\Http\Resources\UserTokenResource;
 use App\Models\User;
+use Illuminate\Database\RecordsNotFoundException;
 use Illuminate\Http\Request;
 use Illuminate\Validation\Rule;
-use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 
 class TokensController extends Controller
 {
@@ -50,7 +50,7 @@ class TokensController extends Controller
 
         $token = $user->tokens()->find($token);
         if (empty($token)) {
-            throw new NotFoundHttpException();
+            throw new RecordsNotFoundException();
         }
 
         $token->delete();
