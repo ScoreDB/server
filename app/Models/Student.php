@@ -2,9 +2,13 @@
 
 namespace App\Models;
 
+use App\Services\Integrations\Github;
+use App\Services\Parsing\StudentInfoFormatter;
 use Carbon\Carbon;
+use DateInterval;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Support\Facades\Cache;
 
 /**
  * Student Model
@@ -24,6 +28,7 @@ use Illuminate\Database\Eloquent\Model;
  * @property string $gender
  * @property ?Carbon $birthday
  * @property ?string $eduid
+ * @property array $photos
  * @mixin Builder
  * @package App\Models
  */
@@ -57,6 +62,26 @@ class Student extends Model
     public function setPinyinAttribute(array $value)
     {
         $this->attributes['pinyin'] = self::encodeArray($value);
+    }
+
+    public function getPhotosAttribute()
+    {
+        $ttl = new DateInterval('PT1H');
+
+        return Cache::remember("student_{$this->id}_photos", $ttl, function () {
+            /** @var Github $github */
+            $github = resolve(Github::class);
+            $result = [];
+            foreach ($github->getPhotoPatterns() as $pattern) {
+                $photo = StudentInfoFormatter::format($pattern, $this);
+                $url   = $github->getFileUrl($photo);
+                if (isset($url)) {
+                    array_push($result, $url);
+                }
+            }
+
+            return $result;
+        });
     }
 
     protected static function encodeArray(array $value)

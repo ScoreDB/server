@@ -19,7 +19,7 @@ class Github
         $this->github = $github;
     }
 
-    public function getScoreDBClient() : Client
+    private function getScoreDBClient() : Client
     {
         if (empty($this::$client)) {
             $client = $this->github->connection('app');
@@ -59,19 +59,33 @@ class Github
         throw new UnexpectedValueException('No installation found.');
     }
 
-    private function getFile(string $path) : string
+    private function getFile(string $path, bool $download = true) : string|array
     {
         $client = $this->getScoreDBClient();
+        $api    = $client->repo()->contents();
 
-        return $client->repo()->contents()->download(
+        $params = [
             'ScoreDB',
             'studentdb-private-store',
             $path,
-            'latest'
-        );
+            'latest',
+        ];
+
+        return $download === true ? $api->download(...$params)
+            : $api->show(...$params);
     }
 
-    public function getManifest() : array
+    public function getFileUrl(string $path) : ?string
+    {
+        $file = $this->getFile($path, false);
+        if (isset($file['download_url'])) {
+            return $file['download_url'];
+        }
+
+        return null;
+    }
+
+    private function getManifest() : array
     {
         $ttl = new DateInterval('PT10M');
 
@@ -100,7 +114,7 @@ class Github
 
         return Cache::remember("store_permission_$login", $ttl,
             function () use ($login) {
-                $client     = $this->getScoreDBClient();
+                $client = $this->getScoreDBClient();
                 $permission = $client->repo()->collaborators()->permission(
                     'ScoreDB',
                     'studentdb-private-store',
@@ -109,5 +123,12 @@ class Github
 
                 return $permission !== 'none';
             });
+    }
+
+    public function getPhotoPatterns() : array
+    {
+        $manifest = $this->getManifest();
+
+        return $manifest['photos'];
     }
 }

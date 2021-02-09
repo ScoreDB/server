@@ -2,6 +2,7 @@
 
 use App\Http\Controllers\StudentDB\ClassesController;
 use App\Http\Controllers\StudentDB\GradesController;
+use App\Http\Controllers\StudentDB\SearchController;
 use App\Http\Controllers\StudentDB\StudentsController;
 use App\Http\Controllers\User\TokensController;
 use Illuminate\Database\RecordsNotFoundException;
@@ -46,8 +47,7 @@ Route::middleware(['auth:sanctum'])->group(function () {
             ]);
 
         Route::middleware('throttle:search')->group(function () {
-            Route::get('/studentdb/search',
-                [StudentsController::class, 'search']);
+            Route::get('/studentdb/search', SearchController::class);
         });
     });
 });
