@@ -15,7 +15,6 @@ class ClassesController extends Controller
         $classId = mb_strtoupper($classId);
 
         $classId = Student::where('classId', $classId)
-            ->groupBy('classId')
             ->pluck('classId')
             ->first();
 
@@ -32,7 +31,6 @@ class ClassesController extends Controller
                     ->get(['id', 'name', 'gender']);
 
                 $gradeId = Student::where('classId', $classId)
-                    ->groupBy('gradeId')
                     ->pluck('gradeId')
                     ->first();
 

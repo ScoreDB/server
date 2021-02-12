@@ -15,13 +15,15 @@ class GradesController extends Controller
         $ttl = new DateInterval('PT10M');
 
         return Cache::remember('studentdb_grades', $ttl, function () {
-            return Student::groupBy('gradeId')
+            return Student::select('gradeId')
+                ->distinct()
                 ->orderBy('gradeId')
                 ->pluck('gradeId')
                 ->transform(function (string $gradeId) {
-                    $classes = Student::where('gradeId', $gradeId)
-                        ->groupBy('classId')
-                        ->get()->count();
+                    $classes = Student::select('classId')
+                        ->distinct()
+                        ->where('gradeId', $gradeId)
+                        ->count('classId');
 
                     $students = Student::where('gradeId', $gradeId)->count();
 
@@ -39,7 +41,6 @@ class GradesController extends Controller
         $gradeId = mb_strtoupper($gradeId);
 
         $gradeId = Student::where('gradeId', $gradeId)
-            ->groupBy('gradeId')
             ->pluck('gradeId')
             ->first();
 
@@ -51,8 +52,9 @@ class GradesController extends Controller
 
         return Cache::remember("studentdb_grade_{$gradeId}", $ttl,
             function () use ($gradeId) {
-                $classes = Student::where('gradeId', $gradeId)
-                    ->groupBy('classId')
+                $classes = Student::select('classId')
+                    ->distinct()
+                    ->where('gradeId', $gradeId)
                     ->orderBy('classId')
                     ->pluck('classId')
                     ->transform(function (string $classId) {
