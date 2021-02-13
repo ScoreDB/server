@@ -12,10 +12,13 @@ class SearchController extends Controller
 {
     public function __invoke(Request $request)
     {
-        $rawQuery = $request->validate([
-            'query' => 'required|string|max:32',
-        ])['query'];
-        $rawQuery = trim($rawQuery);
+        $form = $request->validate([
+            'query'     => 'required|string|max:32',
+            'page_size' => 'nullable|integer|max:100',
+        ]);
+
+        $rawQuery = trim($form['query']);
+        $pageSize = intval($form['page_size'] ?? 9);
 
         $childQueries = explode(' ', $rawQuery);
 
@@ -26,7 +29,7 @@ class SearchController extends Controller
             $idMatch  = strtoupper($idMatch);
             $paginate = Student::where('id', $idMatch)
                 ->orWhere('eduid', $idMatch)
-                ->paginate(12, ['id', 'name', 'gender']);
+                ->paginate($pageSize, ['id', 'name', 'gender']);
         } else {
             $filteredQueries = [];
             $filters         = [];
@@ -66,7 +69,7 @@ class SearchController extends Controller
                 });
             }
 
-            $paginate = $dbQuery->paginate(12, ['id', 'name', 'gender']);
+            $paginate = $dbQuery->paginate($pageSize, ['id', 'name', 'gender']);
         }
 
         return [
