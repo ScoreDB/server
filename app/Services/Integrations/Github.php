@@ -5,6 +5,7 @@ namespace App\Services\Integrations;
 use App\Services\Parsing\StudentInfoParser;
 use DateInterval;
 use Github\Client;
+use Github\Exception\RuntimeException;
 use GrahamCampbell\GitHub\GitHubManager;
 use Illuminate\Support\Facades\Cache;
 use UnexpectedValueException;
@@ -77,9 +78,12 @@ class Github
 
     public function getFileUrl(string $path) : ?string
     {
-        $file = $this->getFile($path, false);
-        if (isset($file['download_url'])) {
-            return $file['download_url'];
+        try {
+            $file = $this->getFile($path, false);
+            if (isset($file['download_url'])) {
+                return $file['download_url'];
+            }
+        } catch (RuntimeException) {
         }
 
         return null;
