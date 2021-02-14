@@ -66,7 +66,7 @@ class Student extends Model
 
     public function getPhotosAttribute()
     {
-        $ttl = new DateInterval('PT1H');
+        $ttl = new DateInterval('PT1M');
 
         return Cache::remember("student_{$this->id}_photos", $ttl, function () {
             /** @var Github $github */
